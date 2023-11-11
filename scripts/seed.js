@@ -1,10 +1,11 @@
 const { sql } = require('@vercel/postgres');
 const {
-  invoices,
+  // invoices,
   customers,
   revenue,
   users,
 } = require('../app/lib/placeholder-data.js');
+const invoices = require('../app/lib/invoices-DB-seed.js');
 const bcrypt = require('bcrypt');
 
 async function seedUsers() {
@@ -31,7 +32,7 @@ async function seedUsers() {
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING;
       `;
-      }),
+      })
     );
 
     console.log(`Seeded ${insertedUsers.length} users`);
@@ -65,13 +66,14 @@ async function seedInvoices() {
 
     // Insert data into the "invoices" table
     const insertedInvoices = await Promise.all(
-      invoices.map(
-        (invoice) => sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
-        ON CONFLICT (id) DO NOTHING;
-      `,
-      ),
+      invoices.map((invoice) => console.log(invoice))
+      // invoices.map(
+      //   (invoice) => sql`
+      //   INSERT INTO invoices (customer_id, amount, status, date)
+      //   VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+      //   ON CONFLICT (id) DO NOTHING;
+      // `
+      // )
     );
 
     console.log(`Seeded ${insertedInvoices.length} invoices`);
@@ -109,8 +111,8 @@ async function seedCustomers() {
         INSERT INTO customers (id, name, email, image_url)
         VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
         ON CONFLICT (id) DO NOTHING;
-      `,
-      ),
+      `
+      )
     );
 
     console.log(`Seeded ${insertedCustomers.length} customers`);
@@ -144,8 +146,8 @@ async function seedRevenue() {
         INSERT INTO revenue (month, revenue)
         VALUES (${rev.month}, ${rev.revenue})
         ON CONFLICT (month) DO NOTHING;
-      `,
-      ),
+      `
+      )
     );
 
     console.log(`Seeded ${insertedRevenue.length} revenue`);
@@ -161,8 +163,8 @@ async function seedRevenue() {
 }
 
 (async () => {
-  await seedUsers();
-  await seedCustomers();
+  // await seedUsers();
+  // await seedCustomers();
+  // await seedRevenue();
   await seedInvoices();
-  await seedRevenue();
 })();
